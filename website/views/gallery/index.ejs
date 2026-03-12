@@ -6,7 +6,7 @@
         
         <!-- Filter Tabs -->
         <div class="flex flex-wrap justify-center gap-3">
-            <% const galleryCats = ['Tất cả Album','Dã ngoại','Sự kiện trường','Sinh nhật lớp']; %>
+            <% const galleryCats = ['Tất cả Album','Updating...','Updating...','Updating...']; %>
             <% galleryCats.forEach(cat => { %>
                 <% const clean = cat === 'Tất cả Album' ? 'Tất cả' : cat; %>
                 <a href="/gallery?category=<%= encodeURIComponent(clean) %>" class="px-5 py-2.5 rounded-full font-medium text-sm transition-colors <%= (category===clean || (!category && clean==='Tất cả')) ? 'bg-peachOrange text-white' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200' %>"><%= cat %></a>
