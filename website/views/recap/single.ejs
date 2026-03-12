@@ -1,31 +1,46 @@
 <!-- Progress Bar reading effect -->
-<div x-data="{ scrollProgress: 0 }" 
-     @scroll.window="scrollProgress = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100"
-     class="fixed top-0 left-0 h-1 bg-peachOrange z-[60] transition-all duration-150"
-     :style="'width: ' + scrollProgress + '%'"></div>
+<div x-data="{ scrollProgress: 0 }"
+    @scroll.window="scrollProgress = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100"
+    class="fixed top-0 left-0 h-1 bg-peachOrange z-[60] transition-all duration-150"
+    :style="'width: ' + scrollProgress + '%'"></div>
 
 <article class="bg-white min-h-screen">
     <!-- Article Header -->
     <header class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div class="flex items-center justify-center gap-2 mb-6 text-sm font-medium tracking-wide">
-            <% recap.tags.forEach(tag => { %>
-                <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full uppercase border border-gray-200"><%= tag %></span>
-            <% }) %>
+            <% recap.tags.forEach(tag=> { %>
+                <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full uppercase border border-gray-200">
+                    <%= tag %>
+                </span>
+                <% }) %>
         </div>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-outfit text-gray-900 leading-tight mb-8">
             <%= recap.title %>
         </h1>
         <div class="flex items-center justify-center gap-6">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-pastelYellow flex items-center justify-center text-xl shadow-inner">👤</div>
+                <div
+                    class="w-12 h-12 rounded-full bg-pastelYellow flex items-center justify-center text-xl shadow-inner">
+                    👤</div>
                 <div class="text-left">
-                    <p class="font-bold text-gray-900 group-hover:text-peachOrange transition-colors"><%= recap.author %></p>
-                    <p class="text-sm text-gray-500"><%= new Date(recap.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                    <p class="font-bold text-gray-900 group-hover:text-peachOrange transition-colors">
+                        <%= recap.author %>
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        <%= new Date(recap.createdAt).toLocaleDateString('vi-VN', { year: 'numeric' , month: 'long' ,
+                            day: 'numeric' }) %>
+                    </p>
                 </div>
             </div>
             <div class="h-10 w-px bg-gray-200 hidden sm:block"></div>
             <div class="flex items-center gap-2 text-gray-500 font-medium">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                    </path>
+                </svg>
                 <%= Math.max(recap.views, 1) %> lượt xem
             </div>
         </div>
@@ -39,24 +54,51 @@
     </div>
 
     <!-- Article Content -->
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg prose-peach max-w-none prose-headings:font-outfit prose-img:rounded-2xl pb-16 border-b border-gray-100">
+    <div
+        class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg prose-peach max-w-none prose-headings:font-outfit prose-img:rounded-2xl pb-16 border-b border-gray-100">
         <div class="text-gray-800 leading-relaxed drop-cap formatting-tools">
             <%- recap.content %>
         </div>
-        
+
         <!-- Social Share & Reactions -->
         <div class="flex flex-col sm:flex-row justify-between items-center mt-12 pt-8 border-t border-gray-100 gap-6">
             <div class="flex items-center gap-4">
-                <button id="likeBtn" class="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 hover:border-red-500 hover:text-red-500 hover:bg-red-50 transition-all font-medium text-gray-600 shadow-sm group">
-                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    Thích (<span id="likeCount"><%= recap.likes || 0 %></span>)
+                <button id="likeBtn"
+                    class="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 hover:border-red-500 hover:text-red-500 hover:bg-red-50 transition-all font-medium text-gray-600 shadow-sm group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg>
+                    Thích (<span id="likeCount">
+                        <%= recap.likes || 0 %>
+                    </span>)
                 </button>
             </div>
             <div class="flex items-center gap-3">
                 <span class="text-sm font-medium text-gray-500">Chia sẻ:</span>
-                <button class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
-                <button class="w-10 h-10 rounded-full bg-blue-100 text-blue-400 flex items-center justify-center hover:bg-blue-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></button>
-                <button class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors tooltip" title="Copy Link" onclick="navigator.clipboard.writeText(window.location.href); alert('Đã copy link!');"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg></button>
+                <button
+                    class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors"><svg
+                        class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg></button>
+                <button
+                    class="w-10 h-10 rounded-full bg-blue-100 text-blue-400 flex items-center justify-center hover:bg-blue-400 hover:text-white transition-colors"><svg
+                        class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                    </svg></button>
+                <button
+                    class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors tooltip"
+                    title="Copy Link"
+                    onclick="navigator.clipboard.writeText(window.location.href); alert('Đã copy link!');"><svg
+                        class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                        </path>
+                    </svg></button>
             </div>
         </div>
     </div>
@@ -65,17 +107,21 @@
 <!-- Comments Section -->
 <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <h3 class="text-2xl font-bold font-outfit text-gray-900 mb-8 flex items-center gap-2">
-        Bình Luận <span class="bg-peachOrange/20 text-orange-700 text-sm py-1 px-3 rounded-full"><%= comments.length %></span>
+        Bình Luận <span class="bg-peachOrange/20 text-orange-700 text-sm py-1 px-3 rounded-full">
+            <%= comments.length %>
+        </span>
     </h3>
-    
+
     <!-- Comment form -->
     <div class="bg-gray-50 p-6 rounded-2xl mb-12 border border-gray-100">
         <form action="/recap/<%= recap._id %>/comment" method="POST">
             <div class="mb-4">
-                <input type="text" name="author" placeholder="Tên của bạn..." required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-peachOrange focus:border-peachOrange transition-colors">
+                <input type="text" name="author" placeholder="Tên của bạn..." required
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-peachOrange focus:border-peachOrange transition-colors">
             </div>
             <div class="mb-4">
-                <textarea name="content" rows="4" placeholder="Chia sẻ cảm nghĩ của bạn..." required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-peachOrange focus:border-peachOrange transition-colors resize-y"></textarea>
+                <textarea name="content" rows="4" placeholder="Chia sẻ cảm nghĩ của bạn..." required
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-peachOrange focus:border-peachOrange transition-colors resize-y"></textarea>
             </div>
             <div class="flex justify-end">
                 <button type="submit" class="btn-primary">Gửi Bình Luận</button>
@@ -85,75 +131,121 @@
 
     <!-- Comment List -->
     <div class="space-y-8">
-        <% if (comments.length === 0) { %>
-            <p class="text-center text-gray-500 py-4 italic">Chưa có bình luận nào cho bài viết này. Hãy là người đầu tiên!</p>
-        <% } %>
-        <% comments.forEach(comment => { %>
-            <div class="flex gap-4">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-lightBlue to-pastelYellow flex items-center justify-center text-gray-700 font-bold flex-shrink-0 border-2 border-white shadow-sm">
-                    <%= comment.author.charAt(0).toUpperCase() %>
-                </div>
-                <div class="bg-gray-50 p-5 rounded-2xl rounded-tl-none w-full border border-gray-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-bold text-gray-900"><%= comment.author %></span>
-                        <span class="text-xs text-gray-400"><%= new Date(comment.createdAt).toLocaleDateString('vi-VN') %></span>
+        <% if (comments.length===0) { %>
+            <p class="text-center text-gray-500 py-4 italic">Chưa có bình luận nào cho bài viết này. Hãy là người đầu
+                tiên!</p>
+            <% } %>
+                <% comments.forEach(comment=> { %>
+                    <div class="flex gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-lightBlue to-pastelYellow flex items-center justify-center text-gray-700 font-bold flex-shrink-0 border-2 border-white shadow-sm">
+                            <%= comment.author.charAt(0).toUpperCase() %>
+                        </div>
+                        <div class="bg-gray-50 p-5 rounded-2xl rounded-tl-none w-full border border-gray-100">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-gray-900">
+                                    <%= comment.author %>
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                    <%= new Date(comment.createdAt).toLocaleDateString('vi-VN') %>
+                                </span>
+                            </div>
+                            <p class="text-gray-700">
+                                <%= comment.content %>
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-gray-700"><%= comment.content %></p>
-                </div>
-            </div>
-        <% }) %>
+                    <% }) %>
     </div>
 </section>
 
 <!-- Related Recaps -->
-<% if (related && related.length > 0) { %>
-<section class="bg-gray-50 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h3 class="text-2xl font-bold font-outfit text-gray-900 mb-8 border-l-4 border-peachOrange pl-4">Bài Viết Liên Quan</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <% related.forEach(rel => { %>
-                <article class="card group flex flex-col h-full bg-white hover:-translate-y-1 transition-transform">
-                    <a href="/recap/<%= rel.slug %>" class="block aspect-w-16 aspect-h-10 overflow-hidden rounded-t-2xl">
-                        <img src="<%= rel.coverImage %>" alt="<%= rel.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </a>
-                    <div class="p-5 flex flex-col flex-grow">
-                        <a href="/recap/<%= rel.slug %>" class="block">
-                            <h4 class="font-bold text-gray-900 group-hover:text-peachOrange transition-colors line-clamp-2"><%= rel.title %></h4>
+<% if (related && related.length> 0) { %>
+    <section class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h3 class="text-2xl font-bold font-outfit text-gray-900 mb-8 border-l-4 border-peachOrange pl-4">Bài Viết
+                Liên Quan</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <% related.forEach(rel=> { %>
+                    <article class="card group flex flex-col h-full bg-white hover:-translate-y-1 transition-transform">
+                        <a href="/recap/<%= rel.slug %>"
+                            class="block aspect-w-16 aspect-h-10 overflow-hidden rounded-t-2xl">
+                            <img src="<%= rel.coverImage %>" alt="<%= rel.title %>"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </a>
-                        <p class="text-sm text-gray-500 mt-2 line-clamp-2"><%= rel.content.replace(/<[^>]+>/g, '') %></p>
-                    </div>
-                </article>
-            <% }) %>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <a href="/recap/<%= rel.slug %>" class="block">
+                                <h4
+                                    class="font-bold text-gray-900 group-hover:text-peachOrange transition-colors line-clamp-2">
+                                    <%= rel.title %>
+                                </h4>
+                            </a>
+                            <p class="text-sm text-gray-500 mt-2 line-clamp-2">
+                                <%= rel.content.replace(/<[^>]+>/g, '') %>
+                            </p>
+                        </div>
+                    </article>
+                    <% }) %>
+            </div>
         </div>
-    </div>
-</section>
-<% } %>
+    </section>
+    <% } %>
 
-<style>
-    /* Styling for WYSIWYG content output */
-    .prose-peach h2, .prose-peach h3 { color: #1f2937; font-weight: 700; margin-top: 2em; margin-bottom: 1em; }
-    .prose-peach p { margin-bottom: 1.5em; }
-    .prose-peach img { margin: 2em auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .prose-peach blockquote { border-left: 4px solid #FFB889; background: #FFF6E5; padding: 1rem 1.5rem; border-radius: 0 0.5rem 0.5rem 0; font-style: italic; color: #4b5563; }
-    .drop-cap > p:first-child::first-letter { font-size: 4em; float: left; margin: 0.1em 0.1em 0 0; line-height: 0.8; font-family: 'Outfit', sans-serif; font-weight: 800; color: #FFB889; }
-</style>
+        <style>
+            /* Styling for WYSIWYG content output */
+            .prose-peach h2,
+            .prose-peach h3 {
+                color: #1f2937;
+                font-weight: 700;
+                margin-top: 2em;
+                margin-bottom: 1em;
+            }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const likeBtn = document.getElementById('likeBtn');
-        const likeCountSpan = document.getElementById('likeCount');
-        if (likeBtn) {
-            likeBtn.addEventListener('click', async () => {
-                try {
-                    const resp = await fetch('/recap/<%= recap._id %>/like', { method: 'POST' });
-                    if (resp.ok) {
-                        const current = parseInt(likeCountSpan.innerText, 10) || 0;
-                        likeCountSpan.innerText = current + 1;
-                    }
-                } catch (err) {
-                    console.error('Like failed', err);
+            .prose-peach p {
+                margin-bottom: 1.5em;
+            }
+
+            .prose-peach img {
+                margin: 2em auto;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+            .prose-peach blockquote {
+                border-left: 4px solid #FFB889;
+                background: #FFF6E5;
+                padding: 1rem 1.5rem;
+                border-radius: 0 0.5rem 0.5rem 0;
+                font-style: italic;
+                color: #4b5563;
+            }
+
+            .drop-cap>p:first-child::first-letter {
+                font-size: 4em;
+                float: left;
+                margin: 0.1em 0.1em 0 0;
+                line-height: 0.8;
+                font-family: 'Outfit', sans-serif;
+                font-weight: 800;
+                color: #FFB889;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const likeBtn = document.getElementById('likeBtn');
+                const likeCountSpan = document.getElementById('likeCount');
+                if (likeBtn) {
+                    likeBtn.addEventListener('click', async () => {
+                        try {
+                            const resp = await fetch('/recap/<%= recap._id %>/like', { method: 'POST' });
+                            if (resp.ok) {
+                                const current = parseInt(likeCountSpan.innerText, 10) || 0;
+                                likeCountSpan.innerText = current + 1;
+                            }
+                        } catch (err) {
+                            console.error('Like failed', err);
+                        }
+                    });
                 }
             });
-        }
-    });
-</script>
+        </script>

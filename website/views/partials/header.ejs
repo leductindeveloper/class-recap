@@ -47,7 +47,9 @@
             <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
                 <a href="/admin" class="block px-3 py-2 rounded-md text-base font-medium text-peachOrange hover:bg-orange-50 mt-4 border border-orange-100">Quản trị viên</a>
             <% } %>
-            <button @click="searchOpen = true" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 md:hidden">🔍 Tìm kiếm</button>
+            <button @click="searchOpen = true" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 md:hidden">
+                🔍 Tìm kiếm
+            </button>
         </div>
     </div>
 

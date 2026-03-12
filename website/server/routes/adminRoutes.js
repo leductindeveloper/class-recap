@@ -9,7 +9,7 @@ router.get('/login', adminController.getLogin);
 router.post('/login', adminController.postLogin);
 router.get('/logout', adminController.logout);
 
-// Admin Dashboard Area (Protected) - dùng layout admin
+// Admin Dashboard Area (Protected) - use admin layout
 router.use(ensureAuthenticated, (req, res, next) => {
   res.locals.layout = 'admin/layout';
   next();
@@ -25,7 +25,6 @@ router.get('/recaps/edit/:id', adminController.getEditRecap);
 router.post('/recaps/edit/:id', upload.single('coverImage'), adminController.postEditRecap);
 router.post('/recaps/delete/:id', adminController.deleteRecap);
 router.post('/recaps/toggle-featured/:id', adminController.toggleFeatured);
-// Thêm xóa/sửa sau khi tạo base
 
 // Gallery Management
 router.get('/gallery', adminController.getGallery);

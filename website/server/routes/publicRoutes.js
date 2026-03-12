@@ -13,20 +13,35 @@ const Recap = require('../models/Recap');
 const Comment = require('../models/Comment');
 const Album = require('../models/Album');
 
-// Route Recap with optional search/filter
+// Route Recap with optional search/filter + pagination
+const RECAPS_PER_PAGE = 9;
 router.get('/recap', async (req, res) => {
   try {
-    const { q, category } = req.query;
+    const { q, category, page = 1 } = req.query;
     const filter = {};
     if (q) {
       filter.title = { $regex: q, $options: 'i' };
     }
     if (category && category !== 'Tất cả') {
-      // assume categories correspond to tags
       filter.tags = category;
     }
-    const recaps = await Recap.find(filter).sort({ createdAt: -1 });
-    res.render('recap/index', { title: 'Tất Cả Bài Viết', path: '/recap', recaps, q, category });
+    const currentPage = Math.max(1, parseInt(page, 10));
+    const totalRecaps = await Recap.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecaps / RECAPS_PER_PAGE) || 1;
+    const recaps = await Recap.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * RECAPS_PER_PAGE)
+      .limit(RECAPS_PER_PAGE);
+    res.render('recap/index', {
+      title: 'Tất Cả Bài Viết',
+      path: '/recap',
+      recaps,
+      q,
+      category,
+      currentPage,
+      totalPages,
+      totalRecaps
+    });
   } catch (error) {
     res.status(500).send('Error');
   }
@@ -51,7 +66,7 @@ router.post('/recap/:id/comment', async (req, res) => {
   try {
     const { author, content } = req.body;
     await Comment.create({ recapId: req.params.id, author, content });
-    res.redirect('back');
+    res.redirect(req.get('referer') || '/recap/' + req.params.id);
   } catch (error) {
     res.status(500).send('Error');
   }

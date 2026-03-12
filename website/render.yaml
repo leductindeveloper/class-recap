@@ -1,0 +1,19 @@
+# Render.com Blueprint - Deploy miễn phí
+# https://render.com
+services:
+  - type: web
+    name: 11k-recap
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGODB_URI
+        sync: false  # Thêm trong Dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

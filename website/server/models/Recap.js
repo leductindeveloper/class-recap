@@ -5,7 +5,7 @@ const recapSchema = new mongoose.Schema({
   slug: { type: String, unique: true, required: true },
   author: { type: String, required: true },
   content: { type: String, required: true },
-  coverImage: { type: String, default: '/images/default-cover.jpg' },
+  coverImage: { type: String, default: 'https://images.unsplash.com/photo-1523580494112-071dcb85144d?w=800&q=80' },
   tags: [String],
   views: { type: Number, default: 0 },
   likes: { type: Number, default: 0 },

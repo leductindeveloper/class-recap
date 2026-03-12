@@ -1,14 +1,10 @@
-module.exports = {
-  ensureAuthenticated: function (req, res, next) {
-    if (req.session.isAdmin) {
-      return next();
-    }
-    res.redirect('/admin/login');
-  },
-  forwardAuthenticated: function (req, res, next) {
-    if (!req.session.isAdmin) {
-      return next();
-    }
-    res.redirect('/admin');
+function ensureAuthenticated(req, res, next) {
+
+  if (req.session && req.session.isAdmin) {
+    return next();
   }
-};
+
+  return res.redirect("/admin/login");
+}
+
+module.exports = { ensureAuthenticated };

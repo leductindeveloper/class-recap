@@ -9,10 +9,9 @@ exports.getHomepage = async (req, res) => {
 
     res.render('homepage/index', {
       title: 'Class Recap - Trang Chủ',
-      path: '/',
-      latestRecaps: latestRecaps || [],
-      featuredRecaps: featuredRecaps || [],
-      galleryPreview: galleryPreview || []
+      latestRecaps,
+      featuredRecaps,
+      galleryPreview
     });
   } catch (error) {
     console.error(error);

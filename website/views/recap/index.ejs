@@ -72,17 +72,30 @@
             <% }) %>
         </div>
         
-        <!-- Pagination UI -->
-        <% if (recaps.length > 0) { %>
+        <!-- Pagination -->
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
         <div class="mt-16 flex justify-center">
-            <nav class="flex items-center gap-2">
-                <a href="#" class="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></a>
-                <a href="#" class="px-4 py-2 rounded-lg bg-peachOrange text-white font-medium shadow-sm">1</a>
-                <a href="#" class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">2</a>
-                <a href="#" class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">3</a>
-                <span class="px-2 text-gray-500">...</span>
-                <a href="#" class="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
+            <nav class="flex items-center gap-2 flex-wrap justify-center">
+                <% 
+                function buildPageUrl(p) {
+                    const parts = [];
+                    if (typeof q !== 'undefined' && q) parts.push('q=' + encodeURIComponent(q));
+                    if (typeof category !== 'undefined' && category && category !== 'Tất cả') parts.push('category=' + encodeURIComponent(category));
+                    parts.push('page=' + p);
+                    return '/recap?' + parts.join('&');
+                }
+                %>
+                <a href="<%= currentPage > 1 ? buildPageUrl(currentPage - 1) : '#' %>" class="p-2 rounded-lg border border-gray-200 <%= currentPage <= 1 ? 'text-gray-300 cursor-not-allowed pointer-events-none' : 'text-gray-600 hover:bg-gray-50' %>"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></a>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) { %>
+                        <a href="<%= buildPageUrl(i) %>" class="px-4 py-2 rounded-lg font-medium <%= i === currentPage ? 'bg-peachOrange text-white shadow-sm' : 'border border-gray-200 text-gray-600 hover:bg-gray-50' %>"><%= i %></a>
+                    <% } else if (i === currentPage - 3 || i === currentPage + 3) { %>
+                        <span class="px-2 text-gray-400">...</span>
+                    <% } %>
+                <% } %>
+                <a href="<%= currentPage < totalPages ? buildPageUrl(currentPage + 1) : '#' %>" class="p-2 rounded-lg border border-gray-200 <%= currentPage >= totalPages ? 'text-gray-300 cursor-not-allowed pointer-events-none' : 'text-gray-600 hover:bg-gray-50' %>"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
             </nav>
+            <p class="text-center text-sm text-gray-500 mt-4">Trang <%= currentPage %> / <%= totalPages %> • Tổng <%= totalRecaps %> bài viết</p>
         </div>
         <% } %>
     </div>
