@@ -1,0 +1,78 @@
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-500 text-sm mt-1">Tổng quan hoạt động của Website Lớp Mình</p>
+    </div>
+    <div class="hidden sm:block">
+        <span class="bg-white px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm border border-gray-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"/></svg>
+            System Online
+        </span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    <!-- Stat Card 1 -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+        <div class="w-14 h-14 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-2xl">📝</div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 mb-1">Tổng Bài Viết</p>
+            <h3 class="text-2xl font-bold text-gray-900"><%= recapCount %></h3>
+        </div>
+    </div>
+
+    <!-- Stat Card 2 -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+        <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-2xl">📸</div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 mb-1">Album Ảnh</p>
+            <h3 class="text-2xl font-bold text-gray-900"><%= albumCount %></h3>
+        </div>
+    </div>
+
+    <!-- Stat Card 3 -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+        <div class="w-14 h-14 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-2xl">💬</div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 mb-1">Bình Luận</p>
+            <h3 class="text-2xl font-bold text-gray-900"><%= commentCount %></h3>
+        </div>
+    </div>
+
+    <!-- Stat Card 4 -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+        <div class="w-14 h-14 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-2xl">👁️</div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 mb-1">Tổng Lượt Xem</p>
+            <h3 class="text-2xl font-bold text-gray-900"><%= totalViews %></h3>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+            🚀 Quick Actions
+        </h3>
+        <div class="grid grid-cols-2 gap-4">
+            <a href="/admin/recaps/create" class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-xl hover:border-peachOrange hover:bg-orange-50 transition-colors group">
+                <svg class="w-8 h-8 text-gray-400 group-hover:text-peachOrange mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span class="text-sm font-medium text-gray-600 group-hover:text-peachOrange">Viết Bài Mới</span>
+            </a>
+            <a href="/admin/gallery" class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition-colors group">
+                <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span class="text-sm font-medium text-gray-600 group-hover:text-blue-500">Upload Ảnh</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzMiIGhlaWdodD0iNzQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGNpcmNsZSBjeD0iMzYiIGN5PSIzNyIgcj0iMSIgZmlsbD0iI2U1ZTdlYiIvPjwvZz48L3N2Zz4=')]">
+        <h3 class="text-lg font-bold text-gray-900 mb-6">Chào quản trị viên,</h3>
+        <p class="text-gray-600 leading-relaxed mb-4">
+            Bạn đang truy cập vào hệ thống quản trị của 11K Recap. Tại đây bạn có thể thêm bài viết mới cho trang chủ, quản lý các hình ảnh kỷ niệm của lớp, hay kiểm duyệt bình luận của các bạn khác gửi về.
+        </p>
+        <p class="text-gray-600 leading-relaxed">
+            Chúc bạn một ngày tràn đầy năng lượng! ✨
+        </p>
+    </div>
+</div>

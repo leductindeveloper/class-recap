@@ -1,0 +1,66 @@
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Duyệt Bình Luận</h1>
+    <p class="text-gray-500 text-sm mt-1">Quản lý và phê duyệt các bình luận từ người dùng vào bài viết</p>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-peachOrange"></span>
+        </span>
+        <h2 class="font-bold text-gray-800">Bình luận chờ duyệt (<%= comments.length %>)</h2>
+    </div>
+
+    <% if (comments.length === 0) { %>
+        <div class="p-12 text-center">
+            <div class="w-16 h-16 mx-auto bg-green-50 text-green-500 rounded-full flex items-center justify-center text-3xl mb-4">✨</div>
+            <h3 class="text-lg font-bold text-gray-900">Tuyệt vời!</h3>
+            <p class="text-gray-500">Tất cả bình luận đã được xử lý. Không có bình luận nào đang chờ duyệt.</p>
+        </div>
+    <% } %>
+
+    <div class="divide-y divide-gray-100">
+        <% comments.forEach(comment => { %>
+            <div class="p-6 md:p-8 hover:bg-gray-50 transition-colors flex flex-col md:flex-row gap-6">
+                <!-- Info -->
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center font-bold text-gray-600">
+                            <%= comment.author.charAt(0).toUpperCase() %>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900"><%= comment.author %></p>
+                            <p class="text-xs text-gray-500"><%= new Date(comment.createdAt).toLocaleString('vi-VN') %></p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-100 p-4 rounded-xl shadow-sm mb-3">
+                        <p class="text-gray-700 italic">"<%= comment.content %>"</p>
+                    </div>
+
+                    <p class="text-sm text-gray-500">
+                        Bài viết: <a href="/recap/<%= comment.recapId ? comment.recapId.slug : '#' %>" target="_blank" class="font-medium text-peachOrange hover:underline"><%= comment.recapId ? comment.recapId.title : 'Bài viết không xác định' %></a>
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-row md:flex-col items-center justify-center gap-3 shrink-0 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                    <form action="/admin/comments/approve/<%= comment._id %>" method="POST" class="w-full">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-green-50 text-green-700 hover:bg-green-500 hover:text-white rounded-xl font-medium transition-colors border border-green-200 hover:border-transparent">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Duyệt
+                        </button>
+                    </form>
+                    
+                    <form action="/admin/comments/delete/<%= comment._id %>" method="POST" class="w-full" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-red-50 text-red-700 hover:bg-red-500 hover:text-white rounded-xl font-medium transition-colors border border-red-200 hover:border-transparent">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Xóa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

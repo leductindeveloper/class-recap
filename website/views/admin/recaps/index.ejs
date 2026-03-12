@@ -1,0 +1,83 @@
+<div class="mb-8 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Quản Lý Bài Viết</h1>
+        <p class="text-gray-500 text-sm mt-1">Xem, thêm, sửa, xóa các bài đăng</p>
+    </div>
+    <a href="/admin/recaps/create" class="btn-primary py-2.5 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Viết bài mới
+    </a>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto min-h-[400px]">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-600 tracking-wide uppercase">
+                    <th class="py-4 px-6">Bài Viết</th>
+                    <th class="py-4 px-6">Tác Giả</th>
+                    <th class="py-4 px-6 text-center">Lượt Xem</th>
+                    <th class="py-4 px-6 text-center">Ngày Đăng</th>
+                    <th class="py-4 px-6 text-right">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 divide-y divide-gray-50">
+                <% if (recaps.length === 0) { %>
+                <tr>
+                    <td colspan="5" class="py-12 text-center text-gray-500 italic">
+                        Chưa có bài viết nào trong hệ thống.
+                    </td>
+                </tr>
+                <% } %>
+
+                <% recaps.forEach(recap => { %>
+                <tr class="hover:bg-gray-50/50 transition-colors group">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                                <img src="<%= recap.coverImage %>" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 line-clamp-1 max-w-sm"><%= recap.title %></h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <% if (recap.isFeatured) { %>
+                                        <span class="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Nổi bật</span>
+                                    <% } %>
+                                    <span class="text-xs text-gray-400 font-mono">/<%= recap.slug %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 font-medium"><%= recap.author %></td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm font-semibold"><%= recap.views %></span>
+                    </td>
+                    <td class="py-4 px-6 text-center text-sm text-gray-500">
+                        <%= new Date(recap.createdAt).toLocaleDateString('vi-VN') %>
+                    </td>
+                    <td class="py-4 px-6 text-right space-x-2">
+                        <a href="/recap/<%= recap.slug %>" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors tooltip" title="Xem bài">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </a>
+                        <a href="/admin/recaps/edit/<%= recap._id %>" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors tooltip" title="Sửa">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </a>
+                        <form action="/admin/recaps/delete/<%= recap._id %>" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+                            <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors tooltip" title="Xóa">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </form>
+                        <form action="/admin/recaps/toggle-featured/<%= recap._id %>" method="POST" class="inline-block">
+                            <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg <%= recap.isFeatured ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600' %> hover:bg-gray-200 transition-colors tooltip" title="<%= recap.isFeatured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật' %>">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.94a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.372 2.449a1 1 0 00-.364 1.118l1.286 3.94c.3.921-.755 1.688-1.538 1.118l-3.372-2.449a1 1 0 00-1.176 0l-3.372 2.449c-.783.57-1.838-.197-1.538-1.118l1.286-3.94a1 1 0 00-.364-1.118L2.063 9.367c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.94z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="bg-gray-50 py-12 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold font-outfit text-gray-900 mb-4">Bài Viết</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Cập nhật những hoạt động, thông báo và câu chuyện mới nhất của lớp.</p>
+    </div>
+</div>
+
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Filter/Search Bar (UI Only) -->
+        <div class="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-2xl shadow-soft mb-12 gap-4">
+            <div class="flex gap-2">
+                <% const categories = ['Tất cả','Hoạt động','Thông báo']; %>
+                <% categories.forEach(cat => { %>
+                    <a href="/recap?<%= q ? 'q=' + encodeURIComponent(q) + '&' : '' %>category=<%= encodeURIComponent(cat) %>" class="px-4 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm <%= (category===cat||(!category && cat==='Tất cả')) ? 'bg-peachOrange text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' %>"><%= cat %></a>
+                <% }) %>
+            </div>
+            <div class="w-full md:w-72 relative text-gray-400 focus-within:text-gray-600">
+                <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <form action="/recap" method="GET" class="w-full">
+                <input type="text" name="q" value="<%= q || '' %>" placeholder="Tìm kiếm bài viết..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-peachOrange focus:bg-white transition-colors duration-300 text-sm">
+                <% if (category) { %>
+                    <input type="hidden" name="category" value="<%= category %>">
+                <% } %>
+            </form>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <% if (recaps.length === 0) { %>
+                <div class="col-span-full py-20 text-center">
+                    <div class="text-6xl mb-4">📝</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Chưa có bài viết nào</h3>
+                    <p class="text-gray-500">Hãy cập nhật bài viết đầu tiên trên hệ thống Admin nhé.</p>
+                </div>
+            <% } %>
+
+            <% recaps.forEach(recap => { %>
+                <article class="card group flex flex-col h-full bg-white transform hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+                    <a href="/recap/<%= recap.slug %>" class="block aspect-w-4 aspect-h-3 overflow-hidden rounded-t-2xl relative">
+                        <img src="<%= recap.coverImage %>" alt="<%= recap.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <% if (recap.isFeatured) { %>
+                        <span class="absolute top-4 left-4 bg-pastelYellow/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-yellow-800 shadow-sm">Nổi bật</span>
+                        <% } %>
+                    </a>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex items-center gap-2 mb-3">
+                            <% recap.tags.slice(0, 2).forEach(tag => { %>
+                                <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium uppercase tracking-wide"><%= tag %></span>
+                            <% }) %>
+                        </div>
+                        <a href="/recap/<%= recap.slug %>" class="block mb-2">
+                            <h3 class="text-xl font-bold font-outfit text-gray-900 group-hover:text-peachOrange transition-colors line-clamp-2 leading-snug">
+                                <%= recap.title %>
+                            </h3>
+                        </a>
+                        <p class="text-gray-600 line-clamp-3 mb-6 text-sm flex-grow">
+                            <%= recap.content.replace(/<[^>]+>/g, '') %>
+                        </p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <div class="flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-full bg-lightBlue flex items-center justify-center text-sm">👤</span>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900 group-hover:text-peachOrange transition-colors"><%= recap.author %></p>
+                                    <p class="text-xs text-gray-500"><%= new Date(recap.createdAt).toLocaleDateString('vi-VN') %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+        
+        <!-- Pagination UI -->
+        <% if (recaps.length > 0) { %>
+        <div class="mt-16 flex justify-center">
+            <nav class="flex items-center gap-2">
+                <a href="#" class="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></a>
+                <a href="#" class="px-4 py-2 rounded-lg bg-peachOrange text-white font-medium shadow-sm">1</a>
+                <a href="#" class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">2</a>
+                <a href="#" class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">3</a>
+                <span class="px-2 text-gray-500">...</span>
+                <a href="#" class="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
+            </nav>
+        </div>
+        <% } %>
+    </div>
+</section>

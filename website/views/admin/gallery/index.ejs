@@ -1,0 +1,130 @@
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Quản Lý Thư Viện Ảnh</h1>
+        <p class="text-gray-500 text-sm mt-1">Tạo Album và đăng tải hình ảnh kỷ niệm của lớp</p>
+    </div>
+    <button onclick="document.getElementById('createAlbumModal').classList.remove('hidden')" class="btn-primary py-2.5 flex items-center gap-2 whitespace-nowrap">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Tạo Album Mới
+    </button>
+</div>
+
+<!-- Modal Create Album -->
+<div id="createAlbumModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('createAlbumModal').classList.add('hidden')"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-100">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-orange-50 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">Tạo Album Mới</h3>
+                        <div class="mt-4">
+                            <form action="/admin/gallery/create-album" method="POST" id="createAlbumForm">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Tên Album <span class="text-red-500">*</span></label>
+                                        <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-peachOrange focus:border-peachOrange sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
+                                        <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-peachOrange focus:border-peachOrange sm:text-sm bg-white">
+                                            <option value="Hoạt động">Hoạt động</option>
+                                            <option value="Sự kiện trường">Sự kiện trường</option>
+                                            <option value="Dã ngoại">Dã ngoại</option>
+                                            <option value="Học tập">Học tập</option>
+                                            <option value="Chung">Chung</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả ngắn</label>
+                                        <textarea name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-peachOrange focus:border-peachOrange sm:text-sm"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-100">
+                <button type="submit" form="createAlbumForm" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-peachOrange text-base font-medium text-white hover:bg-orange-600 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                    Tạo Album
+                </button>
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors" onclick="document.getElementById('createAlbumModal').classList.add('hidden')">
+                    Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- List Albums -->
+<div class="space-y-8">
+    <% if (albums.length === 0) { %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-500 italic">
+            Chưa có album nào. Vui lòng tạo album trước khi upload ảnh.
+        </div>
+    <% } %>
+
+    <% albums.forEach(album => { %>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" x-data="{ expanded: false }">
+        <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer hover:bg-gray-50 transition-colors" @click="expanded = !expanded">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider"><%= album.category %></span>
+                    <span class="text-sm font-medium text-gray-500"><%= album.images.length %> hình ảnh</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-peachOrange"><%= album.name %></h3>
+                    <form action="/admin/gallery/delete-album/<%= album._id %>" method="POST" onsubmit="return confirm('Xóa album sẽ xóa toàn bộ ảnh, tiếp tục?');">
+                        <button type="submit" class="text-red-500 hover:text-red-700 text-sm">Xóa</button>
+                    </form>
+                </div>
+                <p class="text-gray-500 text-sm mt-1 max-w-xl"><%= album.description %></p>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+                <!-- Nút chặn sự kiện click của div cha để không trigger @click="expanded = !expanded" -->
+                <div @click.stop class="w-full md:w-auto">
+                    <form action="/admin/gallery/upload/<%= album._id %>" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-2 w-full">
+                        <input type="file" name="images" multiple required accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 custom-file-input">
+                        <button type="submit" class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm whitespace-nowrap">Upload NhIều Ảnh</button>
+                    </form>
+                </div>
+                <!-- Toggle icon -->
+                <svg class="w-6 h-6 text-gray-400 transform transition-transform" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+        </div>
+        
+        <!-- Image Grid Dropdown -->
+        <div x-show="expanded" x-collapse x-cloak class="border-t border-gray-100 bg-gray-50 p-6">
+            <% if (album.images.length > 0) { %>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <% album.images.forEach(img => { %>
+                        <div class="aspect-w-1 aspect-h-1 rounded-xl overflow-hidden relative group shadow-sm border border-gray-200 bg-white">
+                            <img src="<%= img.url %>" class="w-full h-full object-cover">
+                            <!-- Nút xóa (demo ui) -->
+                            <form action="/admin/gallery/<%= album._id %>/image/delete/<%= img._id %>" method="POST" class="absolute top-2 right-2" onsubmit="return confirm('Xóa ảnh này?');">
+                                <button type="submit" class="p-1.5 bg-white/80 backdrop-blur rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-sm" title="Xóa ảnh">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-8 text-sm text-gray-500">
+                    Album này chưa có hình ảnh nào. Bạn có thể sử dụng nút Upload ở trên để thêm hình ảnh (Hỗ trợ upload nhiều file cùng lúc).
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <% }) %>
+</div>
+
+<style>
+    /* Ẩn bớt text file input mặc định */
+    .custom-file-input::-webkit-file-upload-button { cursor: pointer; }
+</style>
