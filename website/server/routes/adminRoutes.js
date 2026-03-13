@@ -39,3 +39,26 @@ router.post('/comments/approve/:id', adminController.approveComment);
 router.post('/comments/delete/:id', adminController.deleteComment);
 
 module.exports = router;
+// DELETE ALBUM
+exports.deleteAlbum = async (req, res) => {
+
+  await Album.findByIdAndDelete(req.params.id);
+
+  res.redirect('/admin/gallery');
+
+};
+
+// DELETE IMAGE
+exports.deleteImage = async (req, res) => {
+
+  const { albumId, imageId } = req.params;
+
+  const album = await Album.findById(albumId);
+
+  album.images = album.images.filter(img => img._id.toString() !== imageId);
+
+  await album.save();
+
+  res.redirect('/admin/gallery');
+
+};
