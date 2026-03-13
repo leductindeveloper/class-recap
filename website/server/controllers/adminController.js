@@ -212,12 +212,6 @@ exports.deleteComment = async (req, res) => {
 
   res.redirect('/admin/comments');
 };
-const express = require('express');
-const router = express.Router();
-const { ensureAuthenticated } = require('../middleware/auth');
-const adminController = require('../controllers/adminController');
-const upload = require('../middleware/upload');
-
 // Admin Auth
 router.get('/login', adminController.getLogin);
 router.post('/login', adminController.postLogin);
@@ -250,7 +244,6 @@ router.post('/gallery/:albumId/image/delete/:imageId', adminController.deleteIma
 // Comment Management
 router.get('/comments', adminController.getComments);
 router.post('/comments/approve/:id', adminController.approveComment);
-router.post('/comments/delete/:id', adminController.deleteComment);
 // DELETE ALBUM
 exports.deleteAlbum = async (req, res) => {
   try {
