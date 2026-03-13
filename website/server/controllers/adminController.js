@@ -1,8 +1,6 @@
 const Recap = require('../models/Recap');
 const Comment = require('../models/Comment');
 const Album = require('../models/Album');
-const path = require('path');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -11,158 +9,241 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// LOGIN
+
+// ================= LOGIN =================
+
 exports.getLogin = (req, res) => {
-  if (req.session.isAdmin) return res.redirect('/admin');
-  res.render('admin/login', { layout: false, error: null });
+
+  if (req.session.isAdmin) {
+    return res.redirect('/admin');
+  }
+
+  res.render('admin/login', {
+    layout: false,
+    error: null
+  });
+
 };
 
 exports.postLogin = (req, res) => {
-  const { username, password } = req.body;
+
+  const username = (req.body.username || '').trim();
+  const password = (req.body.password || '').trim();
 
   const adminUser = (process.env.ADMIN_USERNAME || 'admin').trim();
   const adminPass = (process.env.ADMIN_PASSWORD || 'admin').trim();
 
   if (username === adminUser && password === adminPass) {
+
     req.session.isAdmin = true;
-    res.redirect('/admin');
-  } else {
-    res.render('admin/login', { layout: false, error: 'Sai tài khoản hoặc mật khẩu' });
+
+    return res.redirect('/admin');
+
   }
+
+  res.render('admin/login', {
+    layout: false,
+    error: 'Sai tài khoản hoặc mật khẩu'
+  });
+
 };
 
 exports.logout = (req, res) => {
-  req.session.destroy();
-  res.redirect('/admin/login');
+
+  req.session.destroy(() => {
+    res.redirect('/admin/login');
+  });
+
 };
 
-// DASHBOARD
+
+// ================= DASHBOARD =================
+
 exports.getDashboard = async (req, res) => {
 
-  const recapCount = await Recap.countDocuments();
-  const commentCount = await Comment.countDocuments();
-  const albumCount = await Album.countDocuments();
+  try {
 
-  const totalViewsObj = await Recap.aggregate([
-    { $group: { _id: null, totalViews: { $sum: '$views' } } }
-  ]);
+    const recapCount = await Recap.countDocuments();
+    const commentCount = await Comment.countDocuments();
+    const albumCount = await Album.countDocuments();
 
-  const totalViews = totalViewsObj.length ? totalViewsObj[0].totalViews : 0;
+    const totalViewsObj = await Recap.aggregate([
+      { $group: { _id: null, totalViews: { $sum: '$views' } } }
+    ]);
 
-  res.render('admin/dashboard', {
-    path: '/admin',
-    recapCount,
-    commentCount,
-    albumCount,
-    totalViews
-  });
+    const totalViews = totalViewsObj.length ? totalViewsObj[0].totalViews : 0;
+
+    res.render('admin/dashboard', {
+      path: '/admin',
+      recapCount,
+      commentCount,
+      albumCount,
+      totalViews
+    });
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin');
+
+  }
+
 };
 
-// SLUG
+
+// ================= SLUG =================
+
 function slugify(text) {
-  return text.toString().toLowerCase()
+
+  return text
+    .toString()
+    .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w\-]+/g, '')
     .replace(/\-\-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
+
 }
 
-// LIST RECAP
+
+// ================= RECAP =================
+
 exports.getRecaps = async (req, res) => {
+
   const recaps = await Recap.find().sort({ createdAt: -1 });
-  res.render('admin/recaps/index', { path: '/admin/recaps', recaps });
+
+  res.render('admin/recaps/index', {
+    path: '/admin/recaps',
+    recaps
+  });
+
 };
 
-// CREATE RECAP
 exports.getCreateRecap = (req, res) => {
-  res.render('admin/recaps/create', { path: '/admin/recaps', recap: null });
+
+  res.render('admin/recaps/create', {
+    path: '/admin/recaps',
+    recap: null
+  });
+
 };
 
 exports.postCreateRecap = async (req, res) => {
 
-  const { title, author, content, tags } = req.body;
+  try {
 
-  let coverImage = 'https://images.unsplash.com/photo-1523580494112-071dcb85144d?w=800&q=80';
+    const { title, author, content, tags } = req.body;
 
-  if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    coverImage = result.secure_url;
+    let coverImage = 'https://images.unsplash.com/photo-1523580494112-071dcb85144d?w=800&q=80';
+
+    if (req.file) {
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "class-recap"
+      });
+
+      coverImage = result.secure_url;
+
+    }
+
+    const slug = slugify(title) + '-' + Date.now();
+
+    const tagsArray = tags ? tags.split(',').map(t => t.trim()) : [];
+
+    await Recap.create({
+      title,
+      slug,
+      author,
+      content,
+      coverImage,
+      tags: tagsArray
+    });
+
+    res.redirect('/admin/recaps');
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin/recaps');
+
   }
 
-  const slug = slugify(title) + '-' + Date.now();
-  const tagsArray = tags ? tags.split(',').map(t => t.trim()) : [];
-
-  await Recap.create({
-    title,
-    slug,
-    author,
-    content,
-    coverImage,
-    tags: tagsArray
-  });
-
-  res.redirect('/admin/recaps');
 };
 
-// EDIT RECAP
+
 exports.getEditRecap = async (req, res) => {
 
   const recap = await Recap.findById(req.params.id);
-  if (!recap) return res.redirect('/admin/recaps');
+
+  if (!recap) {
+    return res.redirect('/admin/recaps');
+  }
 
   res.render('admin/recaps/create', {
     path: '/admin/recaps',
     recap
   });
+
 };
 
 exports.postEditRecap = async (req, res) => {
 
-  const { title, author, content, tags } = req.body;
-  const recap = await Recap.findById(req.params.id);
+  try {
 
-  const tagsArray = tags ? tags.split(',').map(t => t.trim()) : [];
+    const { title, author, content, tags } = req.body;
 
-  const updateObj = {
-    title,
-    author,
-    content,
-    tags: tagsArray
-  };
+    const recap = await Recap.findById(req.params.id);
 
-  if (req.file) {
+    const tagsArray = tags ? tags.split(',').map(t => t.trim()) : [];
 
-    if (recap.coverImage && !recap.coverImage.startsWith('http')) {
-      const oldPath = path.join(__dirname, '../../public', recap.coverImage);
-      fs.unlink(oldPath, () => {});
+    const updateObj = {
+      title,
+      author,
+      content,
+      tags: tagsArray
+    };
+
+    if (req.file) {
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "class-recap"
+      });
+
+      updateObj.coverImage = result.secure_url;
+
     }
 
-    const result = await cloudinary.uploader.upload(req.file.path);
-    updateObj.coverImage = result.secure_url;
+    await Recap.findByIdAndUpdate(req.params.id, updateObj);
+
+    res.redirect('/admin/recaps');
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin/recaps');
+
   }
 
-  await Recap.findByIdAndUpdate(req.params.id, updateObj);
-
-  res.redirect('/admin/recaps');
 };
 
-// DELETE RECAP
 exports.deleteRecap = async (req, res) => {
 
-  const recap = await Recap.findById(req.params.id);
+  try {
 
-  if (recap.coverImage && !recap.coverImage.startsWith('http')) {
-    const filePath = path.join(__dirname, '../../public', recap.coverImage);
-    fs.unlink(filePath, () => {});
+    await Recap.findByIdAndDelete(req.params.id);
+
+    res.redirect('/admin/recaps');
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin/recaps');
+
   }
 
-  await Recap.findByIdAndDelete(req.params.id);
-
-  res.redirect('/admin/recaps');
 };
 
-// FEATURED
 exports.toggleFeatured = async (req, res) => {
 
   const recap = await Recap.findById(req.params.id);
@@ -172,13 +253,12 @@ exports.toggleFeatured = async (req, res) => {
   await recap.save();
 
   res.redirect('/admin/recaps');
-};
 
+};
 
 
 // ================= GALLERY =================
 
-// VIEW GALLERY ADMIN
 exports.getGallery = async (req, res) => {
 
   const albums = await Album.find().sort({ createdAt: -1 });
@@ -187,9 +267,9 @@ exports.getGallery = async (req, res) => {
     path: '/admin/gallery',
     albums
   });
+
 };
 
-// CREATE ALBUM
 exports.createAlbum = async (req, res) => {
 
   const { name, description, category } = req.body;
@@ -202,17 +282,20 @@ exports.createAlbum = async (req, res) => {
   });
 
   res.redirect('/admin/gallery');
+
 };
 
-// UPLOAD IMAGES
 exports.postUploadImages = async (req, res) => {
 
   try {
 
     const { albumId } = req.params;
+
     const album = await Album.findById(albumId);
 
-    if (!album) return res.redirect('/admin/gallery');
+    if (!album) {
+      return res.redirect('/admin/gallery');
+    }
 
     const images = [];
 
@@ -225,6 +308,7 @@ exports.postUploadImages = async (req, res) => {
       images.push({
         url: result.secure_url
       });
+
     }
 
     album.images.push(...images);
@@ -234,12 +318,14 @@ exports.postUploadImages = async (req, res) => {
     res.redirect('/admin/gallery');
 
   } catch (err) {
+
     console.log(err);
     res.redirect('/admin/gallery');
+
   }
+
 };
 
-// DELETE ALBUM
 exports.deleteAlbum = async (req, res) => {
 
   try {
@@ -254,9 +340,9 @@ exports.deleteAlbum = async (req, res) => {
     res.redirect('/admin/gallery');
 
   }
+
 };
 
-// DELETE IMAGE
 exports.deleteImage = async (req, res) => {
 
   try {
@@ -265,7 +351,9 @@ exports.deleteImage = async (req, res) => {
 
     const album = await Album.findById(albumId);
 
-    if (!album) return res.redirect('/admin/gallery');
+    if (!album) {
+      return res.redirect('/admin/gallery');
+    }
 
     album.images = album.images.filter(
       img => img._id.toString() !== imageId
@@ -281,6 +369,7 @@ exports.deleteImage = async (req, res) => {
     res.redirect('/admin/gallery');
 
   }
+
 };
 
 
@@ -296,13 +385,17 @@ exports.getComments = async (req, res) => {
     path: '/admin/comments',
     comments
   });
+
 };
 
 exports.approveComment = async (req, res) => {
 
-  await Comment.findByIdAndUpdate(req.params.id, { isApproved: true });
+  await Comment.findByIdAndUpdate(req.params.id, {
+    isApproved: true
+  });
 
   res.redirect('/admin/comments');
+
 };
 
 exports.deleteComment = async (req, res) => {
@@ -310,4 +403,5 @@ exports.deleteComment = async (req, res) => {
   await Comment.findByIdAndDelete(req.params.id);
 
   res.redirect('/admin/comments');
+
 };
