@@ -80,7 +80,8 @@ exports.postCreateRecap = async (req, res) => {
     const { title, author, content, tags } = req.body;
     let coverImage = 'https://images.unsplash.com/photo-1523580494112-071dcb85144d?w=800&q=80';
     if (req.file) {
-      coverImage = '/uploads/' + req.file.filename;
+      const result = await cloudinary.uploader.upload(req.file.path);
+coverImage = result.secure_url;
     }
     const slug = slugify(title) + '-' + Date.now();
     
