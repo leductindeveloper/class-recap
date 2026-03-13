@@ -1,36 +1,19 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-
-// Đảm bảo thư mục upload tồn tại
-const uploadDir = path.join(__dirname, '../../public/uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const multer = require("multer")
+const path = require("path")
 
 const storage = multer.diskStorage({
+
   destination: function (req, file, cb) {
-    cb(null, uploadDir);
+    cb(null, "public/uploads/")
   },
+
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    const uniqueName = Date.now() + path.extname(file.originalname)
+    cb(null, uniqueName)
   }
-});
 
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // limit 5MB
-  fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|webp|gif/;
-    const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimeType = fileTypes.test(file.mimetype);
-    if(mimeType && extName) {
-      return cb(null, true);
-    } else {
-      cb('Error: Images Only!');
-    }
-  }
-});
+})
 
-module.exports = upload;
+const upload = multer({ storage: storage })
+
+module.exports = upload
