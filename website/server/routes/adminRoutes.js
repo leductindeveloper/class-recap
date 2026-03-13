@@ -31,13 +31,22 @@ router.post('/recaps/edit/:id', isAdmin, upload.single('coverImage'), adminContr
 router.post('/recaps/delete/:id', isAdmin, adminController.deleteRecap);
 router.post('/recaps/featured/:id', isAdmin, adminController.toggleFeatured);
 
-// GALLERY
+// ================= GALLERY =================
+
+// TRANG GALLERY (QUAN TRỌNG)
+router.get('/gallery', isAdmin, adminController.getGallery);
+
+// upload ảnh
 router.post('/gallery/upload/:albumId', isAdmin, upload.array('images', 10), adminController.postUploadImages);
 
+// xóa album
 router.post('/gallery/delete-album/:id', isAdmin, adminController.deleteAlbum);
+
+// xóa ảnh
 router.post('/gallery/delete-image/:albumId/:imageId', isAdmin, adminController.deleteImage);
 
-// COMMENTS
+// ================= COMMENTS =================
+
 router.get('/comments', isAdmin, adminController.getComments);
 router.post('/comments/approve/:id', isAdmin, adminController.approveComment);
 router.post('/comments/delete/:id', isAdmin, adminController.deleteComment);
