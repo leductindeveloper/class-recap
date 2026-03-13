@@ -38,6 +38,7 @@ exports.logout = (req, res) => {
 
 // DASHBOARD
 exports.getDashboard = async (req, res) => {
+
   const recapCount = await Recap.countDocuments();
   const commentCount = await Comment.countDocuments();
   const albumCount = await Album.countDocuments();
@@ -79,6 +80,7 @@ exports.getCreateRecap = (req, res) => {
 };
 
 exports.postCreateRecap = async (req, res) => {
+
   const { title, author, content, tags } = req.body;
 
   let coverImage = 'https://images.unsplash.com/photo-1523580494112-071dcb85144d?w=800&q=80';
@@ -105,10 +107,14 @@ exports.postCreateRecap = async (req, res) => {
 
 // EDIT RECAP
 exports.getEditRecap = async (req, res) => {
+
   const recap = await Recap.findById(req.params.id);
   if (!recap) return res.redirect('/admin/recaps');
 
-  res.render('admin/recaps/create', { path: '/admin/recaps', recap });
+  res.render('admin/recaps/create', {
+    path: '/admin/recaps',
+    recap
+  });
 };
 
 exports.postEditRecap = async (req, res) => {
@@ -168,48 +174,128 @@ exports.toggleFeatured = async (req, res) => {
   res.redirect('/admin/recaps');
 };
 
-// GALLERY
+
+
+// ================= GALLERY =================
+
+// VIEW GALLERY ADMIN
+exports.getGallery = async (req, res) => {
+
+  const albums = await Album.find().sort({ createdAt: -1 });
+
+  res.render('admin/gallery/index', {
+    path: '/admin/gallery',
+    albums
+  });
+};
+
+// CREATE ALBUM
+exports.createAlbum = async (req, res) => {
+
+  const { name, description, category } = req.body;
+
+  await Album.create({
+    name,
+    description,
+    category,
+    images: []
+  });
+
+  res.redirect('/admin/gallery');
+};
+
+// UPLOAD IMAGES
 exports.postUploadImages = async (req, res) => {
+
   try {
 
-    const { albumId } = req.params
-    const album = await Album.findById(albumId)
+    const { albumId } = req.params;
+    const album = await Album.findById(albumId);
 
-    if (!album) return res.redirect('/admin/gallery')
+    if (!album) return res.redirect('/admin/gallery');
 
-    const images = []
+    const images = [];
 
     for (const file of req.files) {
 
       const result = await cloudinary.uploader.upload(file.path, {
         folder: "class-recap"
-      })
+      });
 
       images.push({
         url: result.secure_url
-      })
-
+      });
     }
 
-    album.images.push(...images)
+    album.images.push(...images);
 
-    await album.save()
+    await album.save();
 
-    res.redirect('/admin/gallery')
+    res.redirect('/admin/gallery');
 
   } catch (err) {
-    console.log(err)
-    res.redirect('/admin/gallery')
+    console.log(err);
+    res.redirect('/admin/gallery');
   }
-}
-// COMMENTS
+};
+
+// DELETE ALBUM
+exports.deleteAlbum = async (req, res) => {
+
+  try {
+
+    await Album.findByIdAndDelete(req.params.id);
+
+    res.redirect('/admin/gallery');
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin/gallery');
+
+  }
+};
+
+// DELETE IMAGE
+exports.deleteImage = async (req, res) => {
+
+  try {
+
+    const { albumId, imageId } = req.params;
+
+    const album = await Album.findById(albumId);
+
+    if (!album) return res.redirect('/admin/gallery');
+
+    album.images = album.images.filter(
+      img => img._id.toString() !== imageId
+    );
+
+    await album.save();
+
+    res.redirect('/admin/gallery');
+
+  } catch (err) {
+
+    console.log(err);
+    res.redirect('/admin/gallery');
+
+  }
+};
+
+
+// ================= COMMENTS =================
+
 exports.getComments = async (req, res) => {
 
   const comments = await Comment.find({ isApproved: false })
     .populate('recapId', 'title')
     .sort({ createdAt: -1 });
 
-  res.render('admin/comments/index', { path: '/admin/comments', comments });
+  res.render('admin/comments/index', {
+    path: '/admin/comments',
+    comments
+  });
 };
 
 exports.approveComment = async (req, res) => {
@@ -224,35 +310,4 @@ exports.deleteComment = async (req, res) => {
   await Comment.findByIdAndDelete(req.params.id);
 
   res.redirect('/admin/comments');
-};
-// DELETE ALBUM
-exports.deleteAlbum = async (req, res) => {
-  try {
-    await Album.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/gallery');
-  } catch (err) {
-    console.log(err);
-    res.redirect('/admin/gallery');
-  }
-};
-
-// DELETE IMAGE
-exports.deleteImage = async (req, res) => {
-  try {
-    const { albumId, imageId } = req.params;
-
-    const album = await Album.findById(albumId);
-    if (!album) return res.redirect('/admin/gallery');
-
-    album.images = album.images.filter(
-      img => img._id.toString() !== imageId
-    );
-
-    await album.save();
-
-    res.redirect('/admin/gallery');
-  } catch (err) {
-    console.log(err);
-    res.redirect('/admin/gallery');
-  }
 };
