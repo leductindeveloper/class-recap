@@ -169,38 +169,21 @@ exports.toggleFeatured = async (req, res) => {
 };
 
 // GALLERY
-exports.getGallery = async (req, res) => {
-
-  const albums = await Album.find().sort({ createdAt: -1 });
-
-  res.render('admin/gallery/index', { path: '/admin/gallery', albums });
-};
-
-exports.postCreateAlbum = async (req, res) => {
-
-  const { name, description, category } = req.body;
-
-  await Album.create({ name, description, category });
-
-  res.redirect('/admin/gallery');
-};
-
 exports.postUploadImages = async (req, res) => {
   try {
 
     const { albumId } = req.params
-
     const album = await Album.findById(albumId)
 
-    if (!album) {
-      return res.redirect('/admin/gallery')
-    }
+    if (!album) return res.redirect('/admin/gallery')
 
     const images = []
 
     for (const file of req.files) {
 
-      const result = await cloudinary.uploader.upload(file.path)
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: "class-recap"
+      })
 
       images.push({
         url: result.secure_url
@@ -215,11 +198,8 @@ exports.postUploadImages = async (req, res) => {
     res.redirect('/admin/gallery')
 
   } catch (err) {
-
     console.log(err)
-
     res.redirect('/admin/gallery')
-
   }
 }
 // COMMENTS
