@@ -237,11 +237,6 @@ exports.deleteComment = async (req, res) => {
 
   res.redirect('/admin/comments');
 };
-// Admin Auth
-router.get('/login', adminController.getLogin);
-router.post('/login', adminController.postLogin);
-router.get('/logout', adminController.logout);
-
 // Admin Dashboard Area (Protected) - use admin layout
 router.use(ensureAuthenticated, (req, res, next) => {
   res.locals.layout = 'admin/layout';
