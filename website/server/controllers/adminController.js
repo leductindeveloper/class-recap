@@ -1,5 +1,6 @@
 const Recap = require('../models/Recap');
 const Comment = require('../models/Comment');
+const Album = require('../models/Album');
 const path = require('path');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
@@ -250,8 +251,6 @@ router.post('/gallery/:albumId/image/delete/:imageId', adminController.deleteIma
 router.get('/comments', adminController.getComments);
 router.post('/comments/approve/:id', adminController.approveComment);
 router.post('/comments/delete/:id', adminController.deleteComment);
-const Album = require('../models/Album');
-
 // DELETE ALBUM
 exports.deleteAlbum = async (req, res) => {
   try {
