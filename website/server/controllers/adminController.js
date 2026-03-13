@@ -123,7 +123,10 @@ exports.postEditRecap = async (req, res) => {
         const oldPath = path.join(__dirname, '../../public', recap.coverImage);
         fs.unlink(oldPath, () => {});
       }
-      updateObj.coverImage = '/uploads/' + req.file.filename;
+      updateObj.coverImage = if (req.file) {
+  const result = await cloudinary.uploader.upload(req.file.path);
+  coverImage = result.secure_url;
+};
     }
     await Recap.findByIdAndUpdate(req.params.id, updateObj);
     res.redirect('/admin/recaps');
