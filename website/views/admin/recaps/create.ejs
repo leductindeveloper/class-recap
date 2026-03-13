@@ -26,7 +26,7 @@
 
             <div class="space-y-6">
                 <!-- Cover Image -->
-                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200" x-data="{ imageUrl: '<%= recap && recap.coverImage ? recap.coverImage : '' %>' }">
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200" x-data="{ imageUrl: '<%= recap?.coverImage || '' %>' }">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Ảnh Bìa (Cover)</label>
                     
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl relative overflow-hidden group">
