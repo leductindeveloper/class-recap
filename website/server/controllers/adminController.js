@@ -187,21 +187,28 @@ exports.postCreateAlbum = async (req, res) => {
 
 // UPLOAD GALLERY IMAGES
 exports.postUploadImages = async (req, res) => {
+  try {
 
-  const album = await Album.findById(req.params.albumId);
+    const album = await Album.findById(req.params.albumId);
 
-  for (const file of req.files) {
+    if (!album) {
+      return res.redirect('/admin/gallery');
+    }
 
-    const result = await cloudinary.uploader.upload(file.path);
+    const newImages = req.files.map(file => ({
+      url: file.path
+    }));
 
-    album.images.push({
-      url: result.secure_url
-    });
+    album.images.push(...newImages);
+
+    await album.save();
+
+    res.redirect('/admin/gallery');
+
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/gallery');
   }
-
-  await album.save();
-
-  res.redirect('/admin/gallery');
 };
 
 // COMMENTS
