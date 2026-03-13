@@ -196,9 +196,32 @@ exports.postUploadImages = async (req, res) => {
       return res.redirect('/admin/gallery')
     }
 
-    const images = req.files.map(file => ({
-      url: file.path
-    }))
+    const images = []
+
+    for (const file of req.files) {
+
+      const result = await cloudinary.uploader.upload(file.path)
+
+      images.push({
+        url: result.secure_url
+      })
+
+    }
+
+    album.images.push(...images)
+
+    await album.save()
+
+    res.redirect('/admin/gallery')
+
+  } catch (err) {
+
+    console.log(err)
+
+    res.redirect('/admin/gallery')
+
+  }
+}
 
     album.images.push(...images)
 
