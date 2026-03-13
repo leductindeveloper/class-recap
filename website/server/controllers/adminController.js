@@ -266,31 +266,36 @@ router.post('/gallery/:albumId/image/delete/:imageId', adminController.deleteIma
 router.get('/comments', adminController.getComments);
 router.post('/comments/approve/:id', adminController.approveComment);
 router.post('/comments/delete/:id', adminController.deleteComment);
+const Album = require('../models/Album');
+
 // DELETE ALBUM
 exports.deleteAlbum = async (req, res) => {
-
-  await Album.findByIdAndDelete(req.params.id);
-
-  res.redirect('/admin/gallery');
-
+  try {
+    await Album.findByIdAndDelete(req.params.id);
+    res.redirect('/admin/gallery');
+  } catch (err) {
+    console.log(err);
+    res.redirect('/admin/gallery');
+  }
 };
-
 
 // DELETE IMAGE
 exports.deleteImage = async (req, res) => {
+  try {
+    const { albumId, imageId } = req.params;
 
-  const { albumId, imageId } = req.params;
+    const album = await Album.findById(albumId);
+    if (!album) return res.redirect('/admin/gallery');
 
-  const album = await Album.findById(albumId);
+    album.images = album.images.filter(
+      img => img._id.toString() !== imageId
+    );
 
-  if (!album) return res.redirect('/admin/gallery');
+    await album.save();
 
-  album.images = album.images.filter(
-    img => img._id.toString() !== imageId
-  );
-
-  await album.save();
-
-  res.redirect('/admin/gallery');
-
+    res.redirect('/admin/gallery');
+  } catch (err) {
+    console.log(err);
+    res.redirect('/admin/gallery');
+  }
 };
