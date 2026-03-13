@@ -50,7 +50,9 @@ app.set('layout', 'layout')
 // STATIC FILES
 // ==========================
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '7d'
+}))
 
 
 // ==========================
