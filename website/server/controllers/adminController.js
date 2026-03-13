@@ -1,5 +1,4 @@
 const Recap = require('../models/Recap');
-const Album = require('../models/Album');
 const Comment = require('../models/Comment');
 const path = require('path');
 const fs = require('fs');
