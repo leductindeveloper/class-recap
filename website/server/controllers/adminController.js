@@ -186,31 +186,9 @@ exports.postCreateAlbum = async (req, res) => {
 };
 
 // UPLOAD GALLERY IMAGES
-exports.postUploadImages = async (req, res) => {
-  try {
-
-    const album = await Album.findById(req.params.albumId);
-
-    if (!album) {
-      return res.redirect('/admin/gallery');
-    }
-
-    const newImages = req.files.map(file => ({
-      url: file.path
-    }));
-
-    album.images.push(...newImages);
-
-    await album.save();
-
-    res.redirect('/admin/gallery');
-
-  } catch (err) {
-    console.error(err);
-    res.redirect('/admin/gallery');
-  }
-};
-
+const images = req.files.map(file => ({
+  url: file.path || file.secure_url || file.url
+}));
 // COMMENTS
 exports.getComments = async (req, res) => {
 
