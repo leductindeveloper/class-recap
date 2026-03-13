@@ -207,6 +207,21 @@ exports.postUploadImages = async (req, res) => {
       })
 
     }
+
+    album.images.push(...images)
+
+    await album.save()
+
+    res.redirect('/admin/gallery')
+
+  } catch (err) {
+
+    console.log(err)
+
+    res.redirect('/admin/gallery')
+
+  }
+}
 // COMMENTS
 exports.getComments = async (req, res) => {
 
