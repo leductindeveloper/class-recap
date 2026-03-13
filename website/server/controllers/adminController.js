@@ -185,10 +185,35 @@ exports.postCreateAlbum = async (req, res) => {
   res.redirect('/admin/gallery');
 };
 
-// UPLOAD GALLERY IMAGES
-const images = req.files.map(file => ({
-  url: file.path || file.secure_url || file.url
-}));
+exports.postUploadImages = async (req, res) => {
+  try {
+
+    const { albumId } = req.params
+
+    const album = await Album.findById(albumId)
+
+    if (!album) {
+      return res.redirect('/admin/gallery')
+    }
+
+    const images = req.files.map(file => ({
+      url: file.path
+    }))
+
+    album.images.push(...images)
+
+    await album.save()
+
+    res.redirect('/admin/gallery')
+
+  } catch (err) {
+
+    console.log(err)
+
+    res.redirect('/admin/gallery')
+
+  }
+}
 // COMMENTS
 exports.getComments = async (req, res) => {
 
